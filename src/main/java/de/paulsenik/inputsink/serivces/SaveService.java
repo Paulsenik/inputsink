@@ -2,6 +2,7 @@ package de.paulsenik.inputsink.serivces;
 
 import de.paulsenik.inputsink.action.Action;
 import de.paulsenik.inputsink.trigger.Trigger;
+import de.paulsenik.inputsink.ui.UI;
 import de.paulsenik.jpl.io.PDataStorage;
 import de.paulsenik.jpl.io.PFolder;
 import java.io.FileInputStream;
@@ -18,6 +19,8 @@ public class SaveService {
   public static SaveService instance;
   PDataStorage settings = new PDataStorage();
 
+  public boolean visibility = true;
+
   public SaveService() {
     instance = this;
     readSaveFile();
@@ -25,18 +28,22 @@ public class SaveService {
 
   public boolean readSaveFile() {
     settings.read(SETTINGS_PATH);
-    InputService.instance.connectSerial(settings.getString("port"));
+    try {
+      String port = settings.getString("port");
+      visibility = settings.getBoolean("vis");
+      if (port != null && !port.isBlank()) {
+        InputService.instance.connectSerial(port, false);
+      }
+    } catch (IllegalArgumentException ignored) {
+    }
 
-    for (String s : PFolder.getFiles(TRIGGER_FOLDER, ".ser")) {
-      Object obj = deSerialize(s);
-      if (obj != null) {
-        Trigger trigger = (Trigger) obj;
-        System.out.println("deserialized: "
-            + trigger.displayName + " " + trigger.getEnterDisplayName() + " "
-            + trigger.getExitDisplayName());
-        InputService.instance.addTrigger(trigger);
-        for (Action a : trigger.getActions()) {
-          System.out.println("deserialized: " + a.getDisplayValue());
+    String[] files = PFolder.getFiles(TRIGGER_FOLDER, ".ser");
+    if (files != null) {
+      for (String s : files) {
+        Object obj = deSerialize(s);
+        if (obj != null) {
+          Trigger trigger = (Trigger) obj;
+          InputService.instance.addTrigger(trigger, false);
         }
       }
     }
@@ -46,19 +53,24 @@ public class SaveService {
   public void save() {
     PFolder.createFolder(TRIGGER_FOLDER);
 
-    List<Trigger> trigger = InputService.instance.trigger;
+    List<Trigger> trigger = InputService.instance.getTriggerList();
     for (int i = 0; i < trigger.size(); i++) {
-      serializeObj(trigger.get(i), TRIGGER_FOLDER + i + "trigger.ser");
+      if(!serializeObj(trigger.get(i), TRIGGER_FOLDER + i + "trigger.ser")){
+        System.out.println("[SaveService] :: failed Serialization of "+trigger.get(i).displayName);
+      }
     }
 
     settings.clear();
     settings.add("port", InputService.instance.getSerialPort());
+    if (UI.instance != null) {
+      settings.add("vis", UI.instance.isVisible());
+    }
     settings.save(SETTINGS_PATH);
 
-    System.out.println("saved");
+    System.out.println("[SaveService] :: saved");
   }
 
-  private void serializeObj(Object obj, String path) {
+  private boolean serializeObj(Object obj, String path) {
     try {
       FileOutputStream fos = new FileOutputStream(path);
       ObjectOutputStream oos = new ObjectOutputStream(fos);
@@ -66,8 +78,9 @@ public class SaveService {
       oos.flush();
       oos.close();
     } catch (Exception e) {
-      e.printStackTrace();
+      return false;
     }
+    return true;
   }
 
   private Object deSerialize(String path) {
@@ -78,8 +91,7 @@ public class SaveService {
       ois.close();
       return obj;
     } catch (Exception e) {
-      System.out.println(e);
+      return null;
     }
-    return null;
   }
 }

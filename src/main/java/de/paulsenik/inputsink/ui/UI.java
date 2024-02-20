@@ -1,6 +1,7 @@
 package de.paulsenik.inputsink.ui;
 
 import de.paulsenik.inputsink.serivces.InputService;
+import de.paulsenik.inputsink.serivces.SaveService;
 import de.paulsenik.inputsink.serivces.UserPromptService;
 import de.paulsenik.inputsink.trigger.Trigger;
 import de.paulsenik.jpl.ui.PUIElement;
@@ -20,6 +21,8 @@ import javax.swing.JFrame;
 
 public class UI extends PUIFrame {
 
+  public static UI instance;
+
   private static String LOGO_PATH = "src/main/Inputsink-Colored.png";
   private static String ARDUINO_BUTTON_TEXT = "Arduino: ";
   private UserPromptService promptService;
@@ -33,6 +36,7 @@ public class UI extends PUIFrame {
 
   public UI() {
     super("Inputsink", 1000, 800, false);
+    instance = this;
     promptService = UserPromptService.instance;
 
     initElements();
@@ -50,13 +54,15 @@ public class UI extends PUIFrame {
     }
 
     setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-    setVisible(true);
+    setVisible(SaveService.instance.visibility);
   }
 
   private void initElements() {
     String port = InputService.instance.getSerialPort();
 
-    arduinoButton = new PUIText(this, ARDUINO_BUTTON_TEXT + (port == null ? "---" : port));
+    arduinoButton = new PUIText(this,
+        ARDUINO_BUTTON_TEXT + ((port == null || !InputService.instance.isSerialConnected()) ? "---"
+            : port));
     arduinoButton.addActionListener((e) -> {
       if (InputService.instance.isSerialConnected()) {
         InputService.instance.disconnectSerial();
@@ -65,7 +71,7 @@ public class UI extends PUIFrame {
       } else {
         String portname = UserPromptService.instance.getPortName(this);
         if (portname != null) {
-          if (InputService.instance.connectSerial(portname)) {
+          if (InputService.instance.connectSerial(portname, true)) {
             arduinoButton.setText(ARDUINO_BUTTON_TEXT + portname);
             repaint();
           } else {
@@ -74,6 +80,13 @@ public class UI extends PUIFrame {
         }
       }
     });
+
+    InputService.instance.setSerialDisconnectHook(() -> {
+      System.out.println("Disconnect");
+      arduinoButton.setText(ARDUINO_BUTTON_TEXT + "---");
+      repaint();
+    });
+
     addInputButton = new PUIText(this, "+");
     addInputButton.addActionListener(puiElement -> {
       Trigger t = promptService.getTrigger(this);
@@ -96,7 +109,7 @@ public class UI extends PUIFrame {
 
   public void updateInputList() {
     inputList.clearElements();
-    for (Trigger t : InputService.instance.trigger) {
+    for (Trigger t : InputService.instance.getTriggerList()) {
       inputList.addElement(new InputMappingDisplay(this, t));
     }
   }

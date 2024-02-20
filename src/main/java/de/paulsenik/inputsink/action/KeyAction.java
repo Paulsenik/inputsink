@@ -11,13 +11,12 @@ import java.util.Map;
 
 public class KeyAction extends Action implements Serializable {
 
-  private boolean holdTriggerUntilExit = false;
+  private boolean holdTriggerUntilExit = true;
   private final List<Integer> keyCodes;
 
   public KeyAction(String displayName, List<Integer> keyCodes) throws AWTException {
     super(displayName);
     this.keyCodes = keyCodes;
-    SaveService.instance.save();
   }
 
   @Override

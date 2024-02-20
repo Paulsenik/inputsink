@@ -11,12 +11,13 @@ public class InputService {
 
   public static InputService instance;
 
-  public List<Trigger> trigger = new CopyOnWriteArrayList<>();
-
+  private List<Trigger> trigger = new CopyOnWriteArrayList<>();
   PSerialConnection serialConnection;
   PSerialListener serialListener;
+  Runnable disconnectHook;
 
   public InputService() {
+    instance = this;
     serialListener = (s -> {
       for (Trigger t : trigger) {
         if (t instanceof MicroControllerTrigger) {
@@ -24,21 +25,42 @@ public class InputService {
         }
       }
     });
-    instance = this;
+  }
+
+  public void setSerialDisconnectHook(Runnable r) {
+    disconnectHook = r;
+  }
+
+  public void addTrigger(Trigger t, boolean save) {
+    trigger.add(t);
+    if (save) {
+      SaveService.instance.save();
+    }
   }
 
   public void addTrigger(Trigger t) {
-    trigger.add(t);
+    addTrigger(t, true);
+  }
+
+  public void removeTrigger(Trigger t) {
+    trigger.remove(t);
     SaveService.instance.save();
   }
 
-  public boolean connectSerial(String portName) {
+  public List<Trigger> getTriggerList() {
+    return trigger;
+  }
+
+  public boolean connectSerial(String portName, boolean save) {
     if (serialConnection != null) {
       serialConnection.disconnect();
     }
-    SaveService.instance.save();
+    if (save) {
+      SaveService.instance.save();
+    }
 
     serialConnection = new PSerialConnection(portName);
+    serialConnection.setDisconnectEvent(disconnectHook);
     serialConnection.addListener(serialListener);
     return serialConnection.connect();
   }

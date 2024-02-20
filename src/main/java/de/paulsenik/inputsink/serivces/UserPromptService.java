@@ -8,6 +8,7 @@ import de.paulsenik.jpl.io.serial.PSerialConnection;
 import de.paulsenik.jpl.ui.core.PUIFrame;
 import java.awt.AWTException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -41,9 +42,12 @@ public class UserPromptService {
     Map<String, Integer> selection = KeyAction.getPossibleValues();
     selection.put("", Integer.MAX_VALUE); // escape
 
+    List<String> sorted = new ArrayList<>(selection.keySet());
+    Collections.sort(sorted);
+
     ArrayList<String> selectionWithEscape = new ArrayList<>();
     selectionWithEscape.add("");
-    selectionWithEscape.addAll(selection.keySet());
+    selectionWithEscape.addAll(sorted);
 
     boolean again = true;
     do {

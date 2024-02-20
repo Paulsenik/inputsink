@@ -12,9 +12,7 @@ public class Inputsink {
   public static void main(String[] args) throws AWTException {
     new InputService();
     new KeyPressService();
-    
     new SaveService();
-
     new UserPromptService();
     new UI();
 

@@ -1,6 +1,7 @@
 package de.paulsenik.inputsink.trigger;
 
 import de.paulsenik.inputsink.action.Action;
+import de.paulsenik.inputsink.serivces.SaveService;
 import java.io.Serializable;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -17,10 +18,12 @@ public abstract class Trigger implements Serializable {
 
   public void bind(Action a) {
     actions.add(a);
+    SaveService.instance.save();
   }
 
   public void unbind(Action a) {
     actions.remove(a);
+    SaveService.instance.save();
   }
 
   public void triggerEnter() {
