@@ -15,8 +15,6 @@ public class Inputsink {
 
     InputService inputService = new InputService();
 
-    System.out.println(inputService.getSerialSelection());
-
     Trigger t = new MicroControllerTrigger("test123", "am");
 
     t.bind(new KeyAction("testasdf",
@@ -24,6 +22,6 @@ public class Inputsink {
 
     inputService.addTrigger(t);
 
-    new UI(inputService);
+    new UI();
   }
 }

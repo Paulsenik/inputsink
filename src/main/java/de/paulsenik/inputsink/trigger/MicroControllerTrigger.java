@@ -23,4 +23,14 @@ public class MicroControllerTrigger extends Trigger {
       triggerExit();
     }
   }
+
+  @Override
+  public String getEnterDisplayName() {
+    return enterTriggerValue;
+  }
+
+  @Override
+  public String getExitDisplayName() {
+    return exitTriggerValue;
+  }
 }

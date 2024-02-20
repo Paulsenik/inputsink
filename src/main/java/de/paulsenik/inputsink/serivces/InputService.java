@@ -9,27 +9,30 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 public class InputService {
 
+  public static InputService instance;
+
   public List<Trigger> trigger = new CopyOnWriteArrayList<>();
 
   PSerialConnection serialConnection;
   PSerialListener serialListener;
 
-  public InputService(){
+  public InputService() {
     serialListener = (s -> {
-      for(Trigger t : trigger){
-        if(t instanceof MicroControllerTrigger){
-          ((MicroControllerTrigger)t).onInput(s);
+      for (Trigger t : trigger) {
+        if (t instanceof MicroControllerTrigger) {
+          ((MicroControllerTrigger) t).onInput(s);
         }
       }
     });
+    instance = this;
   }
 
-  public void addTrigger(Trigger t){
+  public void addTrigger(Trigger t) {
     trigger.add(t);
   }
 
-  public boolean connectSerial(String portName){
-    if(serialConnection != null){
+  public boolean connectSerial(String portName) {
+    if (serialConnection != null) {
       serialConnection.disconnect();
     }
 
@@ -38,8 +41,15 @@ public class InputService {
     return serialConnection.connect();
   }
 
-  public List<String> getSerialSelection(){
-    return List.of(PSerialConnection.getSerialPorts());
+  public boolean isSerialConnected() {
+    if (serialConnection == null) {
+      return false;
+    }
+    return serialConnection.isConnected();
+  }
+
+  public boolean disconnectSerial() {
+    return serialConnection.disconnect();
   }
 
 }

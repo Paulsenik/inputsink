@@ -7,9 +7,9 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 public abstract class Trigger {
 
-  private List<Action> actions = new CopyOnWriteArrayList<>();
+  public List<Action> actions = new CopyOnWriteArrayList<>();
 
-  String displayName;
+  public String displayName;
 
   public Trigger(String displayName){
     this.displayName = displayName;
@@ -34,5 +34,8 @@ public abstract class Trigger {
       a.onTriggerExit();
     }
   }
+
+  public abstract String getEnterDisplayName();
+  public abstract String getExitDisplayName();
 
 }

@@ -21,7 +21,7 @@ public class KeyAction extends Action {
   }
 
   @Override
-  public void onTriggerEnter(){
+  public void onTriggerEnter() {
     for (int code : keyCodes) {
       keyPressAgent.keyPress(code);
     }
@@ -41,11 +41,33 @@ public class KeyAction extends Action {
     }
   }
 
+  @Override
+  public String getDisplayValue() {
+    StringBuilder b = new StringBuilder();
+    for (int i = 0; i < keyCodes.size(); i++) {
+      Integer key = keyCodes.get(i);
+      b.append(KeyEvent.getKeyText(key));
+      if (i != keyCodes.size() - 1) {
+        b.append(" + ");
+      }
+    }
+    return b.toString();
+  }
+
   public static Map<String, Integer> getPossibleValues() {
     Map<String, Integer> s = new HashMap<>();
 
-    for (KeyEvent e : KeyEvent.class.getEnumConstants()) {
-      s.put(KeyEvent.getKeyText(e.getKeyCode()), e.getKeyCode());
+    // Iterate over all the public static fields of the KeyEvent class
+    for (java.lang.reflect.Field field : KeyEvent.class.getFields()) {
+      if (field.getType().equals(int.class)) {
+        try {
+          int keyCode = (int) field.get(null);
+          s.put(KeyEvent.getKeyText(keyCode), keyCode);
+        } catch (IllegalAccessException e) {
+          // Handle the exception, or log it
+          e.printStackTrace();
+        }
+      }
     }
 
     return s;

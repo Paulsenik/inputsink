@@ -18,4 +18,6 @@ public abstract class Action{
 
   public abstract void onTriggerExit();
 
+  public abstract String getDisplayValue();
+
 }
