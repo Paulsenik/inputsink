@@ -3,10 +3,11 @@ package de.paulsenik.inputsink.trigger;
 import de.paulsenik.inputsink.action.Action;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public abstract class Trigger {
 
-  private List<Action> actions = new ArrayList<>();
+  private List<Action> actions = new CopyOnWriteArrayList<>();
 
   String displayName;
 

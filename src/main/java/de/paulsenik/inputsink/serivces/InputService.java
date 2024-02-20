@@ -4,12 +4,12 @@ import de.paulsenik.inputsink.trigger.MicroControllerTrigger;
 import de.paulsenik.inputsink.trigger.Trigger;
 import de.paulsenik.jpl.io.serial.PSerialConnection;
 import de.paulsenik.jpl.io.serial.PSerialListener;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class InputService {
 
-  public List<Trigger> trigger = new ArrayList<>();
+  public List<Trigger> trigger = new CopyOnWriteArrayList<>();
 
   PSerialConnection serialConnection;
   PSerialListener serialListener;
@@ -29,6 +29,10 @@ public class InputService {
   }
 
   public boolean connectSerial(String portName){
+    if(serialConnection != null){
+      serialConnection.disconnect();
+    }
+
     serialConnection = new PSerialConnection(portName);
     serialConnection.addListener(serialListener);
     return serialConnection.connect();

@@ -9,17 +9,13 @@ import java.awt.AWTException;
 import java.awt.event.KeyEvent;
 import java.util.List;
 
-/**
- * Hello world!
- */
-public class App {
+public class Inputsink {
 
   public static void main(String[] args) throws RuntimeException, AWTException {
 
     InputService inputService = new InputService();
 
     System.out.println(inputService.getSerialSelection());
-    System.out.println(inputService.connectSerial(inputService.getSerialSelection().get(0)));
 
     Trigger t = new MicroControllerTrigger("test123", "am");
 
@@ -28,6 +24,6 @@ public class App {
 
     inputService.addTrigger(t);
 
-    new UI();
+    new UI(inputService);
   }
 }
