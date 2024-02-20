@@ -1,6 +1,6 @@
 # Inputsink (Java-Alpha)
 
-Is an application for binding any Input to different Actions on your PC.
+Is an application for binding any Input to different **Macros** or **Actions** on your OS.
 
 Possible Input-Sources are Mouse, Keyboard, other HID devices and connected Microcontrollers.
 
@@ -10,7 +10,8 @@ These triggered Actions include:
 - Media-Control (Play, Volume)
 - System-Control (PC-Sleep, Log out)
 
-## Current Project
+## State of this Project
+[!IMPORTANT]
 This project is under construction and just a concept developed in Java.
 
-If Successful, the Project will be converted into a more Low-Level Application.
+If useful enough, the project will be converted into a more low-level application for more fine-control input handling.
