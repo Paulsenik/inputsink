@@ -61,7 +61,7 @@ public class InputMappingDisplay extends PUIElement {
     });
 
     actionList = new PUIList(f, 1);
-    actionList.setSliderWidth(5);
+    actionList.setShowedElements(4);
     actionList.doPaintOverOnHover(false);
     actionList.doPaintOverOnPress(false);
     actionList.showSlider(false);
@@ -99,6 +99,9 @@ public class InputMappingDisplay extends PUIElement {
   @Override
   public synchronized void setBounds(int x, int y, int w, int h) {
     super.setBounds(x, y, w, h);
+
+    b = h/5;
+    p = b/2;
 
     triggerName.setBounds(x + p, y + p, w / 2 - p * 2, b);
     deleteInputMapping.setBounds(x + p, y + h - p - b, b, b);

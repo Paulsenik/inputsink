@@ -1,5 +1,6 @@
 package de.paulsenik.inputsink.ui;
 
+import de.paulsenik.inputsink.Inputsink;
 import de.paulsenik.inputsink.serivces.InputService;
 import de.paulsenik.inputsink.serivces.SaveService;
 import de.paulsenik.inputsink.serivces.UserPromptService;
@@ -7,9 +8,13 @@ import de.paulsenik.inputsink.trigger.Trigger;
 import de.paulsenik.jpl.ui.PUIElement;
 import de.paulsenik.jpl.ui.PUIList;
 import de.paulsenik.jpl.ui.PUIText;
+import de.paulsenik.jpl.ui.core.PUICanvas;
 import de.paulsenik.jpl.ui.core.PUIFrame;
+import de.paulsenik.jpl.ui.core.PUIPaintable;
 import java.awt.AWTException;
+import java.awt.Color;
 import java.awt.Font;
+import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.MenuItem;
 import java.awt.PopupMenu;
@@ -31,8 +36,9 @@ public class UI extends PUIFrame {
   private PUIText addInputButton;
   private PUIList inputList;
 
-  private int m = 10; // border-margin
-  private int bSize = 50;
+  private int m = 20; // border-margin
+  private int bSize = 90;
+  int topBar = 110;
 
   public UI() {
     super("Inputsink", 1000, 800, false);
@@ -59,6 +65,12 @@ public class UI extends PUIFrame {
 
   private void initElements() {
     String port = InputService.instance.getSerialPort();
+
+    new PUICanvas(this, (g, x, y, w, h) -> {
+      g.setColor(Color.white);
+      g.setFont(new Font("Consolas", Font.BOLD, 10));
+      g.drawString(Inputsink.VERSION, x, h);
+    });
 
     arduinoButton = new PUIText(this,
         ARDUINO_BUTTON_TEXT + ((port == null || !InputService.instance.isSerialConnected()) ? "---"
@@ -99,11 +111,19 @@ public class UI extends PUIFrame {
   }
 
   public void updateElements(int w, int h) {
-    arduinoButton.setBounds(m, m, 300, bSize);
+    bSize = Math.min(h / 14, w / 10);
+    topBar = m * 2 + bSize;
+
+    if (h > w && w != 0) {
+      inputList.setShowedElements(h / w * 4);
+    } else {
+      inputList.setShowedElements(3);
+    }
+
+    arduinoButton.setBounds(m, m, w - bSize - m * 3, bSize);
     inputList.setSliderWidth(bSize);
-    int topBar = m * 2 + bSize;
     addInputButton.setBounds(w - m - bSize, m, bSize, bSize);
-    inputList.setBounds(m, topBar, w - m * 2, h - topBar + m);
+    inputList.setBounds(m, topBar, w - m * 2, h - topBar - m * 4);
     updateInputList();
   }
 

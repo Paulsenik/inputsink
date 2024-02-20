@@ -9,6 +9,8 @@ import java.awt.AWTException;
 
 public class Inputsink {
 
+  public static final String VERSION = "v0.1.0";
+
   public static void main(String[] args) throws AWTException {
     new InputService();
     new KeyPressService();
