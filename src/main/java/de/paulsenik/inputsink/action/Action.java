@@ -1,9 +1,11 @@
 package de.paulsenik.inputsink.action;
 
+import java.io.Serializable;
+
 /**
  * A list of Actions is linked to an Input/Trigger
  */
-public abstract class Action{
+public abstract class Action implements Serializable {
 
   boolean triggerOnEnter = true;
   boolean triggerOnExit;

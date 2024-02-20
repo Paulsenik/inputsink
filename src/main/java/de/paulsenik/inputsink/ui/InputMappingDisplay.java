@@ -37,7 +37,7 @@ public class InputMappingDisplay extends PUIElement {
     actionList = new PUIList(f, 1);
     addActionButton = new PUIText(f, "+", 1);
     addActionButton.addActionListener(puiElement -> {
-      Action a = UserPromptService.instance.getAction();
+      Action a = UserPromptService.instance.getAction(f);
 
       if (a != null) {
         trigger.bind(a);
@@ -50,7 +50,7 @@ public class InputMappingDisplay extends PUIElement {
 
   private void updateActions() {
     actionList.clearElements();
-    for (Action a : trigger.actions) {
+    for (Action a : trigger.getActions()) {
       PUIText e = new PUIText(frame, a.getDisplayValue());
       e.addActionListener(puiElement -> {
         if (frame.getUserConfirm("Delete " + e.getText() + "?", "Delete Binding")) {

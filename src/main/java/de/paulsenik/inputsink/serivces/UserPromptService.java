@@ -15,14 +15,12 @@ public class UserPromptService {
 
   public static UserPromptService instance;
 
-  private PUIFrame frame;
 
-  public UserPromptService(PUIFrame frame) {
-    this.frame = frame;
+  public UserPromptService() {
     instance = this;
   }
 
-  public String getPortName() {
+  public String getPortName(PUIFrame frame) {
 
     ArrayList<String> ports = new ArrayList<>();
     ports.add("");
@@ -38,7 +36,7 @@ public class UserPromptService {
     return null;
   }
 
-  public Action getAction() {
+  public Action getAction(PUIFrame frame) {
     List<Integer> keys = new ArrayList<>();
     Map<String, Integer> selection = KeyAction.getPossibleValues();
     selection.put("", Integer.MAX_VALUE); // escape
@@ -70,7 +68,7 @@ public class UserPromptService {
     }
   }
 
-  public Trigger getTrigger() {
+  public Trigger getTrigger(PUIFrame frame) {
     String name = frame.getUserInput("Trigger-Name", "trigger");
     if (isInvalid(name)) {
       return null;

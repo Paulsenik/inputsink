@@ -33,4 +33,5 @@ public class MicroControllerTrigger extends Trigger {
   public String getExitDisplayName() {
     return exitTriggerValue;
   }
+
 }

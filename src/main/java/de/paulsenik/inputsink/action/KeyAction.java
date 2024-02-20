@@ -1,33 +1,33 @@
 package de.paulsenik.inputsink.action;
 
+import de.paulsenik.inputsink.serivces.KeyPressService;
+import de.paulsenik.inputsink.serivces.SaveService;
 import java.awt.AWTException;
-import java.awt.Robot;
 import java.awt.event.KeyEvent;
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class KeyAction extends Action {
+public class KeyAction extends Action implements Serializable {
 
   private boolean holdTriggerUntilExit = false;
-
   private final List<Integer> keyCodes;
-  private final Robot keyPressAgent;
 
   public KeyAction(String displayName, List<Integer> keyCodes) throws AWTException {
     super(displayName);
     this.keyCodes = keyCodes;
-    keyPressAgent = new Robot();
+    SaveService.instance.save();
   }
 
   @Override
   public void onTriggerEnter() {
     for (int code : keyCodes) {
-      keyPressAgent.keyPress(code);
+      KeyPressService.instance.keyPress(code);
     }
     if (!holdTriggerUntilExit) {
       for (int code : keyCodes) {
-        keyPressAgent.keyRelease(code);
+        KeyPressService.instance.keyRelease(code);
       }
     }
   }
@@ -36,7 +36,7 @@ public class KeyAction extends Action {
   public void onTriggerExit() {
     if (holdTriggerUntilExit) {
       for (int code : keyCodes) {
-        keyPressAgent.keyRelease(code);
+        KeyPressService.instance.keyRelease(code);
       }
     }
   }

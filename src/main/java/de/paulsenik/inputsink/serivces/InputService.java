@@ -29,12 +29,14 @@ public class InputService {
 
   public void addTrigger(Trigger t) {
     trigger.add(t);
+    SaveService.instance.save();
   }
 
   public boolean connectSerial(String portName) {
     if (serialConnection != null) {
       serialConnection.disconnect();
     }
+    SaveService.instance.save();
 
     serialConnection = new PSerialConnection(portName);
     serialConnection.addListener(serialListener);
@@ -50,6 +52,10 @@ public class InputService {
 
   public boolean disconnectSerial() {
     return serialConnection.disconnect();
+  }
+
+  public String getSerialPort() {
+    return serialConnection == null ? null : serialConnection.getPortName();
   }
 
 }

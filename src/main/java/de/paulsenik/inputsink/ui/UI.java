@@ -33,7 +33,7 @@ public class UI extends PUIFrame {
 
   public UI() {
     super("Inputsink", 1000, 800, false);
-    promptService = new UserPromptService(this);
+    promptService = UserPromptService.instance;
 
     initElements();
     for (PUIElement e : PUIElement.registeredElements) {
@@ -54,14 +54,16 @@ public class UI extends PUIFrame {
   }
 
   private void initElements() {
-    arduinoButton = new PUIText(this, ARDUINO_BUTTON_TEXT + "---");
+    String port = InputService.instance.getSerialPort();
+
+    arduinoButton = new PUIText(this, ARDUINO_BUTTON_TEXT + (port == null ? "---" : port));
     arduinoButton.addActionListener((e) -> {
       if (InputService.instance.isSerialConnected()) {
         InputService.instance.disconnectSerial();
         arduinoButton.setText(ARDUINO_BUTTON_TEXT + "---");
         repaint();
       } else {
-        String portname = UserPromptService.instance.getPortName();
+        String portname = UserPromptService.instance.getPortName(this);
         if (portname != null) {
           if (InputService.instance.connectSerial(portname)) {
             arduinoButton.setText(ARDUINO_BUTTON_TEXT + portname);
@@ -74,7 +76,7 @@ public class UI extends PUIFrame {
     });
     addInputButton = new PUIText(this, "+");
     addInputButton.addActionListener(puiElement -> {
-      Trigger t = promptService.getTrigger();
+      Trigger t = promptService.getTrigger(this);
       if (t != null) {
         InputService.instance.addTrigger(t);
         updateElements();
