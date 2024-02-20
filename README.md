@@ -1,6 +1,6 @@
 # Inputsink (Java-Alpha)
 
-<img src="src/main/Inputsink-Colored.png" width="200rem">
+<img src="Inputsink-Colored.png" width="200rem">
 
 Inputsink is an application for binding any Input to different **Macros** or **Actions** on your OS.
 

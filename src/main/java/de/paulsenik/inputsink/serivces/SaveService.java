@@ -5,6 +5,7 @@ import de.paulsenik.inputsink.trigger.Trigger;
 import de.paulsenik.inputsink.ui.UI;
 import de.paulsenik.jpl.io.PDataStorage;
 import de.paulsenik.jpl.io.PFolder;
+import de.paulsenik.jpl.utils.PSystem;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
@@ -13,8 +14,8 @@ import java.util.List;
 
 public class SaveService {
 
-  public static final String SETTINGS_PATH = "conf/inputsink.conf";
-  public static final String TRIGGER_FOLDER = "conf/trigger/";
+  public static final String SETTINGS_PATH = PSystem.getWorkingDirectory()+"/conf/inputsink.conf";
+  public static final String TRIGGER_FOLDER = PSystem.getWorkingDirectory()+"/conf/trigger/";
 
   public static SaveService instance;
   PDataStorage settings = new PDataStorage();
@@ -24,13 +25,17 @@ public class SaveService {
   public SaveService() {
     instance = this;
     readSaveFile();
+
+    System.out.println(PSystem.getWorkingDirectory());
   }
 
   public boolean readSaveFile() {
     settings.read(SETTINGS_PATH);
+    int triggerAmount = Integer.MAX_VALUE;
     try {
       String port = settings.getString("port");
       visibility = settings.getBoolean("vis");
+      triggerAmount = settings.getInteger("trigger");
       if (port != null && !port.isBlank()) {
         InputService.instance.connectSerial(port, false);
       }
@@ -39,8 +44,8 @@ public class SaveService {
 
     String[] files = PFolder.getFiles(TRIGGER_FOLDER, ".ser");
     if (files != null) {
-      for (String s : files) {
-        Object obj = deSerialize(s);
+      for (int i=0;i<Math.min(files.length,triggerAmount);i++) {
+        Object obj = deSerialize(files[i]);
         if (obj != null) {
           Trigger trigger = (Trigger) obj;
           InputService.instance.addTrigger(trigger, false);
@@ -62,6 +67,7 @@ public class SaveService {
 
     settings.clear();
     settings.add("port", InputService.instance.getSerialPort());
+    settings.add("trigger",InputService.instance.getTriggerList().size());
     if (UI.instance != null) {
       settings.add("vis", UI.instance.isVisible());
     }
