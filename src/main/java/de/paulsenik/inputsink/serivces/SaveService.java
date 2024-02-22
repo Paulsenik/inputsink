@@ -1,6 +1,5 @@
 package de.paulsenik.inputsink.serivces;
 
-import de.paulsenik.inputsink.action.Action;
 import de.paulsenik.inputsink.trigger.Trigger;
 import de.paulsenik.inputsink.ui.UI;
 import de.paulsenik.jpl.io.PDataStorage;
@@ -14,8 +13,12 @@ import java.util.List;
 
 public class SaveService {
 
-  public static final String SETTINGS_PATH = PSystem.getWorkingDirectory()+"/conf/inputsink.conf";
-  public static final String TRIGGER_FOLDER = PSystem.getWorkingDirectory()+"/conf/trigger/";
+  public static final String SETTINGS_PATH =
+      PSystem.getWorkingDirectory() + PSystem.getFileSeparator() + "conf"
+          + PSystem.getFileSeparator() + "inputsink.conf";
+  public static final String TRIGGER_FOLDER =
+      PSystem.getWorkingDirectory() + PSystem.getFileSeparator() + "conf"
+          + PSystem.getFileSeparator() + "trigger" + PSystem.getFileSeparator();
 
   public static SaveService instance;
   PDataStorage settings = new PDataStorage();
@@ -25,8 +28,7 @@ public class SaveService {
   public SaveService() {
     instance = this;
     readSaveFile();
-
-    System.out.println(PSystem.getWorkingDirectory());
+    System.out.println("[SaveService] :: PWD=" + PSystem.getWorkingDirectory());
   }
 
   public boolean readSaveFile() {
@@ -44,7 +46,7 @@ public class SaveService {
 
     String[] files = PFolder.getFiles(TRIGGER_FOLDER, ".ser");
     if (files != null) {
-      for (int i=0;i<Math.min(files.length,triggerAmount);i++) {
+      for (int i = 0; i < Math.min(files.length, triggerAmount); i++) {
         Object obj = deSerialize(files[i]);
         if (obj != null) {
           Trigger trigger = (Trigger) obj;
@@ -60,14 +62,15 @@ public class SaveService {
 
     List<Trigger> trigger = InputService.instance.getTriggerList();
     for (int i = 0; i < trigger.size(); i++) {
-      if(!serializeObj(trigger.get(i), TRIGGER_FOLDER + i + "trigger.ser")){
-        System.out.println("[SaveService] :: failed Serialization of "+trigger.get(i).displayName);
+      if (!serializeObj(trigger.get(i), TRIGGER_FOLDER + i + "trigger.ser")) {
+        System.out.println(
+            "[SaveService] :: failed Serialization of " + trigger.get(i).displayName);
       }
     }
 
     settings.clear();
     settings.add("port", InputService.instance.getSerialPort());
-    settings.add("trigger",InputService.instance.getTriggerList().size());
+    settings.add("trigger", InputService.instance.getTriggerList().size());
     if (UI.instance != null) {
       settings.add("vis", UI.instance.isVisible());
     }

@@ -10,11 +10,9 @@ import de.paulsenik.jpl.ui.PUIList;
 import de.paulsenik.jpl.ui.PUIText;
 import de.paulsenik.jpl.ui.core.PUICanvas;
 import de.paulsenik.jpl.ui.core.PUIFrame;
-import de.paulsenik.jpl.ui.core.PUIPaintable;
 import java.awt.AWTException;
 import java.awt.Color;
 import java.awt.Font;
-import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.MenuItem;
 import java.awt.PopupMenu;
@@ -70,6 +68,8 @@ public class UI extends PUIFrame {
       g.setColor(Color.white);
       g.setFont(new Font("Consolas", Font.BOLD, 10));
       g.drawString(Inputsink.VERSION, x, h);
+
+      g.drawString("In> " + InputService.instance.getLastInput(), x + 50, h);
     });
 
     arduinoButton = new PUIText(this,

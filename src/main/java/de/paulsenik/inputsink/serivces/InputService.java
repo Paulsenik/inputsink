@@ -2,6 +2,7 @@ package de.paulsenik.inputsink.serivces;
 
 import de.paulsenik.inputsink.trigger.MicroControllerTrigger;
 import de.paulsenik.inputsink.trigger.Trigger;
+import de.paulsenik.inputsink.ui.UI;
 import de.paulsenik.jpl.io.serial.PSerialConnection;
 import de.paulsenik.jpl.io.serial.PSerialListener;
 import java.util.List;
@@ -12,13 +13,18 @@ public class InputService {
   public static InputService instance;
 
   private List<Trigger> trigger = new CopyOnWriteArrayList<>();
-  PSerialConnection serialConnection;
-  PSerialListener serialListener;
-  Runnable disconnectHook;
+  private PSerialConnection serialConnection;
+  private PSerialListener serialListener;
+  private Runnable disconnectHook;
+  private String lastInput = "";
 
   public InputService() {
     instance = this;
     serialListener = (s -> {
+      if (!lastInput.equals(s)) {
+        lastInput = s;
+        UI.instance.repaint();
+      }
       for (Trigger t : trigger) {
         if (t instanceof MicroControllerTrigger) {
           ((MicroControllerTrigger) t).onInput(s);
@@ -78,6 +84,10 @@ public class InputService {
 
   public String getSerialPort() {
     return serialConnection == null ? null : serialConnection.getPortName();
+  }
+
+  public String getLastInput() {
+    return lastInput;
   }
 
 }
