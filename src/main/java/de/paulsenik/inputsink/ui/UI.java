@@ -26,7 +26,7 @@ public class UI extends PUIFrame {
 
   public static UI instance;
 
-  private static String LOGO_PATH = "Inputsink-Colored.png";
+  private static String LOGO_PATH = "Inputsink.png";
   private static String ARDUINO_BUTTON_TEXT = "Arduino: ";
   private UserPromptService promptService;
 
