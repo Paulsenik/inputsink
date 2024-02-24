@@ -3,6 +3,7 @@ package de.paulsenik.inputsink.serivces;
 import de.paulsenik.inputsink.trigger.Trigger;
 import de.paulsenik.inputsink.ui.UI;
 import de.paulsenik.jpl.io.PDataStorage;
+import de.paulsenik.jpl.io.PFile;
 import de.paulsenik.jpl.io.PFolder;
 import de.paulsenik.jpl.utils.PSystem;
 import java.io.FileInputStream;
@@ -59,6 +60,14 @@ public class SaveService {
 
   public void save() {
     PFolder.createFolder(TRIGGER_FOLDER);
+
+    String[] paths = PFolder.getFiles(TRIGGER_FOLDER, "ser");
+
+    if (paths != null) {
+      for (String path : paths) {
+        PFile.deleteFile(path);
+      }
+    }
 
     List<Trigger> trigger = InputService.instance.getTriggerList();
     for (int i = 0; i < trigger.size(); i++) {

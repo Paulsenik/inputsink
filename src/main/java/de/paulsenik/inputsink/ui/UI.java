@@ -93,12 +93,6 @@ public class UI extends PUIFrame {
       }
     });
 
-    InputService.instance.setSerialDisconnectHook(() -> {
-      System.out.println("Disconnect");
-      arduinoButton.setText(ARDUINO_BUTTON_TEXT + "---");
-      repaint();
-    });
-
     addInputButton = new PUIText(this, "+");
     addInputButton.addActionListener(puiElement -> {
       Trigger t = promptService.getTrigger(this);
@@ -166,5 +160,10 @@ public class UI extends PUIFrame {
     } else {
       setVisible(false);
     }
+  }
+
+  public void updatePortDisplay(String port) {
+    arduinoButton.setText(ARDUINO_BUTTON_TEXT + (port == null ? " --- " : port));
+    repaint();
   }
 }
